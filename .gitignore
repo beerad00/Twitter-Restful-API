@@ -2,6 +2,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 
 src/main/resources/application.properties
+pom.xml
 
 ### STS ###
 .apt_generated
