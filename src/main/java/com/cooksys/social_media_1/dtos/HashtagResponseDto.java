@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-public class HashtagDto {
+public class HashtagResponseDto {
 
 	private String label;
 	
