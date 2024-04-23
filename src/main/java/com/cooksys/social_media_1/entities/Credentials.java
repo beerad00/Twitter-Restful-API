@@ -13,10 +13,9 @@ import lombok.RequiredArgsConstructor;
 @Embeddable
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
-
 public class Credentials {
     @Nonnull
+     @Column(unique = true)
     private String username;
     @Nonnull
     private String password;
