@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 @Embeddable
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@RequiredArgsConstructor
 public class Profile {
 
     String firstName;
