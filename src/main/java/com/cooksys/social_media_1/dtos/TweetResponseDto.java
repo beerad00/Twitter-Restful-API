@@ -5,16 +5,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class TweetResponseDto {
+    
     private Long id;
-    //User id
-    private int author;
+    
+    private UserResponseDto author;
 
-    private Long posted;
+    private Timestamp posted;
 
-    private boolean deleted;
     private String content;
-    //Tweet id
-    private int inReplyTo;
-    //Tweet id
-    private int repostOf;
+    
+    private TweetResponseDto inReplyTo;
+    
+    private TweetResponseDto repostOf;
 }
