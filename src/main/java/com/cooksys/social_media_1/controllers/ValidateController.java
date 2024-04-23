@@ -1,4 +1,4 @@
-package controllers;
+package com.cooksys.social_media_1.controllers;
 
 import org.springframework.web.bind.annotation.*;
 

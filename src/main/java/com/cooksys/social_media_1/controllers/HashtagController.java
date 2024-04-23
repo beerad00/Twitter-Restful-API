@@ -1,4 +1,4 @@
-package controllers;
+package com.cooksys.social_media_1.controllers;
 
 import com.cooksys.social_media_1.entities.Hashtag;
 import jakarta.websocket.server.PathParam;

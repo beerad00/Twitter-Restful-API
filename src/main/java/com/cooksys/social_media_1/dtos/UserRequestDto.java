@@ -1,4 +1,4 @@
-package dtos;
+package com.cooksys.social_media_1.dtos;
 
 import com.cooksys.social_media_1.entities.Credentials;
 import com.cooksys.social_media_1.entities.Profile;

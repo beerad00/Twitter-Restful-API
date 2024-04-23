@@ -1,4 +1,4 @@
-package services.impl;
+package com.cooksys.social_media_1.services.Impl;
 
 public class UserServiceImpl {
 
