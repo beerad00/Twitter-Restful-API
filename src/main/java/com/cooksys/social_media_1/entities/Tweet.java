@@ -2,7 +2,6 @@ package com.cooksys.social_media_1.entities;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -33,15 +33,25 @@ public class Tweet {
 	
 	private String content;
 	
+	@ManyToOne
+    @JoinColumn(name = "inReplyTo")
 	private Tweet inReplyTo;
 	
+	@ManyToOne
+    @JoinColumn(name = "repostOf")
 	private Tweet inRepostOf;
 	
+	@OneToMany(mappedBy = "inReplyTo")
+    private List<Tweet> replies;
+	
+	@OneToMany(mappedBy = "inRepostOf")
+    private List<Tweet> reposts;
+	
     @ManyToMany(mappedBy = "likedTweets")
-    private Set<User> likedByUsers;
+    private List<User> likedByUsers;
     
     @ManyToMany(mappedBy = "tweetsMentionedIn")
-    private Set<User> mentionedUsers;
+    private List<User> mentionedUsers;
     
     @ManyToMany
     @JoinTable(
