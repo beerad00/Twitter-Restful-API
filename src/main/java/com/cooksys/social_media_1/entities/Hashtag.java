@@ -19,12 +19,16 @@ public class Hashtag {
 	@Id
 	@GeneratedValue
 	private Integer id;
-	
+
+	@Column(nullable = false, unique = true)
 	private String label;
 	
-	@Column(updatable = false)
+	@Column(nullable = false)
+	@CreatedDate
 	private Timestamp firstUsed;
-	
+
+	@Column(nullable = false)
+    	@LastModifiedDate
 	private Timestamp lastUsed;
 	
     @ManyToMany(mappedBy = "hashtags")
