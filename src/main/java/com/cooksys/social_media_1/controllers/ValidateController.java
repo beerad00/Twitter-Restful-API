@@ -2,8 +2,11 @@ package com.cooksys.social_media_1.controllers;
 
 import org.springframework.web.bind.annotation.*;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/validate")
+@RequiredArgsConstructor
 public class ValidateController {
 
     @GetMapping("/tag/exists/{label}")
