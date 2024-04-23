@@ -11,7 +11,7 @@ public class HashtagResponseDto {
 
 	private String label;
 	
-	Timestamp firstUsed;
+	private Timestamp firstUsed;
 	
-	Timestamp lastUsed;
+	private Timestamp lastUsed;
 }
