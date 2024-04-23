@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-public class ProfileDto {
+public class ProfileRequestDto {
 
 	private String firstName;
 	
