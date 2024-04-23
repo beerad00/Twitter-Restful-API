@@ -1,7 +1,5 @@
 package dtos;
 
-import entities.Credentials;
-import entities.Profile;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

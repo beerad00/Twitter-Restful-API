@@ -1,7 +1,7 @@
 package dtos;
 
-import entities.Credentials;
-import entities.Profile;
+import com.cooksys.social_media_1.entities.Credentials;
+import com.cooksys.social_media_1.entities.Profile;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
