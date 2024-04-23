@@ -26,8 +26,9 @@ public class Tweet {
 	@ManyToOne
 	@JoinColumn(name = "author")
 	private User author;
-	
-	private Timestamp posted;
+
+	@CreatedDate
+	private Timestamp posted = Timestamp.valueOf(LocalDateTime.now());
 	
 	private boolean deleted = false;
 	
