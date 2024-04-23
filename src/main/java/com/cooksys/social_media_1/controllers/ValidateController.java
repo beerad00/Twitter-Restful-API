@@ -1,4 +1,4 @@
-package controllers;
+package com.cooksys.social_media_1.controllers;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -10,19 +10,22 @@ public class ValidateController {
     boolean validateLabelExistence(@PathVariable("label") String label)
     {
         //Return True/False
-        return null;
+        return false;
+        //return null;
     }
     @GetMapping("/username/exists/@{username}")
     boolean validateUserExistence(@PathVariable("username") String username)
     {
         //
-        return null;
+       // return null;
+        return false;
     }
 
     @GetMapping("/username/available/@{username}")
-    boolean validateUserExistence(@PathVariable("username") String username)
+    boolean validateUserAvailable(@PathVariable("username") String username)
     {
         //Just call above method
-        return null;
+        //return null;
+        return false;
     }
 }

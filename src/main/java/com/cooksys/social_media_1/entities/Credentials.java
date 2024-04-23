@@ -1,4 +1,4 @@
-package entities;
+package com.cooksys.social_media_1.entities;
 
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Embeddable;
@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-@AllArgsConstructor
+
 public class Credentials {
     @Nonnull
     private String username;
