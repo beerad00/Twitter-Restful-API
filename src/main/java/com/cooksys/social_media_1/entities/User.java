@@ -25,14 +25,17 @@ public class User {
 	@Id
 	@GeneratedValue
 	private Integer id;
-	
+
+	@Embedded
 	private Credentials credentials;
 	
-	@Column(updatable = false)
-	private Timestamp joined;
+	@Column(nullable = false)
+	@CreatedDate
+    	private Timestamp joined = Timestamp.valueOf(LocalDateTime.now());
 	
 	private boolean deleted = false;
-	
+
+	@Embedded
 	private Profile profile;
 	
 	@OneToMany(mappedBy = "author")
