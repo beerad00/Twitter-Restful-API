@@ -6,9 +6,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.cooksys.social_media_1.entities.Credentials;
+import com.cooksys.social_media_1.entities.Hashtag;
 import com.cooksys.social_media_1.entities.Profile;
 import com.cooksys.social_media_1.entities.Tweet;
 import com.cooksys.social_media_1.entities.User;
+import com.cooksys.social_media_1.repositories.HashtagRepository;
 import com.cooksys.social_media_1.repositories.TweetRepository;
 import com.cooksys.social_media_1.repositories.UserRepository;
 
@@ -21,6 +23,7 @@ public class Seeder implements CommandLineRunner {
 	//private final HashtagRepository hashtagRepository;
 	private final TweetRepository tweetRepository;
 	private final UserRepository userRepository;
+	private final HashtagRepository hashtagRepository;
 
 	/**
 	 * This method seeds the database with 2 users. Each user has 4 tweets and
@@ -107,6 +110,20 @@ public class Seeder implements CommandLineRunner {
 
 		tweetRepository.saveAll(Arrays.asList(new Tweet[] { tweet1, tweet2, tweet3, tweet4, tweet5,
 				tweet6, tweet7, tweet8, response1, response2 }));
-
+		
+		//Hashtags
+		Hashtag hashtag1 = new Hashtag();
+		hashtag1.setLabel("first");
+		hashtag1.setTweets(Arrays.asList(new Tweet[] { tweet1, tweet5 }));
+		hashtag1.setFirstUsed(tweet1.getPosted());
+		hashtag1.setLastUsed(tweet5.getPosted());
+		
+		Hashtag hashtag2 = new Hashtag();
+		hashtag2.setLabel("second");
+		hashtag2.setTweets(Arrays.asList(new Tweet[] { tweet2, tweet6 }));
+		hashtag2.setFirstUsed(tweet2.getPosted());
+		hashtag2.setLastUsed(tweet6.getPosted());
+		
+		hashtagRepository.saveAll(Arrays.asList(new Hashtag[] { hashtag1, hashtag2 }));
 	}
 }
