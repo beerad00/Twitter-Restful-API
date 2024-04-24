@@ -60,6 +60,15 @@ public class UserServiceImpl implements UserService {
 		return userMapper.entitiesToDTOs(followers);
 	}
 
+	@Override
+	public List<UserResponseDto> getFollowedUsers(String username) {
+		// Validate and get followed users
+		List<User> followedUsers = validateUsername(username).get().getFollowing();
+		
+		
+		return userMapper.entitiesToDTOs(followedUsers);
+	}
+
     //Add JPA repo
     //Add methods (CRUD for REST) for user service
 }
