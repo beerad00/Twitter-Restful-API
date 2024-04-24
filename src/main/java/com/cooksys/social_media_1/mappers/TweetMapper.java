@@ -1,8 +1,11 @@
 package com.cooksys.social_media_1.mappers;
 
+
 import com.cooksys.social_media_1.dtos.TweetResponseDto;
 import com.cooksys.social_media_1.entities.Tweet;
+import java.util.List;
 import org.mapstruct.Mapper;
+
 
 import java.util.List;
 
@@ -12,4 +15,5 @@ public interface TweetMapper {
 
     TweetResponseDto entityToDto(Tweet tweet);
 
+	List<TweetResponseDto> entitiesToDTOs(List<Tweet> tweets);
 }
