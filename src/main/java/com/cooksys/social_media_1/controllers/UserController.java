@@ -3,6 +3,7 @@ package com.cooksys.social_media_1.controllers;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,5 +22,10 @@ public class UserController {
 	@GetMapping("/{username}/feed")
 	public List<TweetResponseDto> getUserFeed() {
 		return userService.getUserFeed();
+	}
+	@GetMapping("/@{username}/tweets")
+	public List<TweetResponseDto> getUserTweets(@PathVariable("username") String username)
+	{
+		return userService.getUserTweets(username);
 	}
 }
