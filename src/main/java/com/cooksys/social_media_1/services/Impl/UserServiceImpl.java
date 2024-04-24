@@ -4,10 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+
+import com.cooksys.social_media_1.dtos.CredentialsRequestDto;
 import com.cooksys.social_media_1.dtos.TweetResponseDto;
+import com.cooksys.social_media_1.dtos.UserRequestDto;
 import com.cooksys.social_media_1.dtos.UserResponseDto;
 import com.cooksys.social_media_1.entities.Tweet;
 import com.cooksys.social_media_1.entities.User;
+import com.cooksys.social_media_1.exceptions.NotAuthorizedException;
 import com.cooksys.social_media_1.exceptions.NotFoundException;
 import com.cooksys.social_media_1.mappers.TweetMapper;
 import com.cooksys.social_media_1.mappers.UserMapper;
@@ -57,7 +61,7 @@ public class UserServiceImpl implements UserService {
 		// Validate and get user's followers
 		List<User> followers = validateUsername(username).get().getFollowers();
 		
-		return userMapper.entitiesToDTOs(followers);
+		return userMapper.entitiesToDtos(followers);
 	}
 
 	@Override
@@ -66,7 +70,30 @@ public class UserServiceImpl implements UserService {
 		List<User> followedUsers = validateUsername(username).get().getFollowing();
 		
 		
-		return userMapper.entitiesToDTOs(followedUsers);
+		return userMapper.entitiesToDtos(followedUsers);
+	}
+
+	@Override
+	public void followUser(String username, CredentialsRequestDto credentialsRequestDto) {
+		// Validate and get user to follow
+		User userToFollow = validateUsername(username).get();
+		return;
+	}
+
+	@Override
+	public UserResponseDto updateUsername(String username, UserRequestDto userRequestDto) {
+		// Validate given username
+		User userToUpdate = validateUsername(username).get();
+		
+		// Check for credential match
+		User newUserInfo = userMapper.dtoToEntity(userRequestDto);
+		if (!userToUpdate.getCredentials().equals(newUserInfo.getCredentials())) {
+			throw new NotAuthorizedException("The provided credentials are invalid. Please try again.");
+		}
+		
+		// Update and return username
+		userToUpdate.setProfile(newUserInfo.getProfile());
+		return userMapper.entityToDto(userRepository.saveAndFlush(userToUpdate));
 	}
 
     //Add JPA repo
