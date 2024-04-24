@@ -1,11 +1,8 @@
 package com.cooksys.social_media_1.controllers;
 
 import com.cooksys.social_media_1.entities.Hashtag;
-import jakarta.websocket.server.PathParam;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController

@@ -3,6 +3,9 @@ package com.cooksys.social_media_1.entities;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,7 +31,7 @@ public class Hashtag {
 	private Timestamp firstUsed;
 
 	@Column(nullable = false)
-    	@LastModifiedDate
+    @LastModifiedDate
 	private Timestamp lastUsed;
 	
     @ManyToMany(mappedBy = "hashtags")
