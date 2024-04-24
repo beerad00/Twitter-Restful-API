@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.social_media_1.dtos.TweetResponseDto;
+import com.cooksys.social_media_1.dtos.UserResponseDto;
 import com.cooksys.social_media_1.services.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,5 +23,10 @@ public class UserController {
 	@GetMapping("/{username}/feed")
 	public List<TweetResponseDto> getUserFeed(@PathVariable String username) {
 		return userService.getUserFeed(username);
+	}
+	
+	@GetMapping("/{username}/followers")
+	public List<UserResponseDto> getUserFollowers(@PathVariable String username) {
+		return userService.getUserFollowers(username);
 	}
 }
