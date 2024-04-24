@@ -5,10 +5,12 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import com.cooksys.social_media_1.dtos.TweetResponseDto;
+import com.cooksys.social_media_1.dtos.UserResponseDto;
 import com.cooksys.social_media_1.entities.Tweet;
 import com.cooksys.social_media_1.entities.User;
 import com.cooksys.social_media_1.exceptions.NotFoundException;
 import com.cooksys.social_media_1.mappers.TweetMapper;
+import com.cooksys.social_media_1.mappers.UserMapper;
 import com.cooksys.social_media_1.repositories.UserRepository;
 import com.cooksys.social_media_1.services.UserService;
 
@@ -20,6 +22,7 @@ public class UserServiceImpl implements UserService {
 	
 	private final UserRepository userRepository;
 	private final TweetMapper tweetMapper;
+	private final UserMapper userMapper;
 	
 	// Helper method to validate the given username
 	private Optional<User> validateUsername(String username) {
@@ -47,6 +50,14 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		return tweetMapper.entitiesToDTOs(userTweets);
+	}
+
+	@Override
+	public List<UserResponseDto> getUserFollowers(String username) {		
+		// Validate and get user's followers
+		List<User> followers = validateUsername(username).get().getFollowers();
+		
+		return userMapper.entitiesToDTOs(followers);
 	}
 
     //Add JPA repo
