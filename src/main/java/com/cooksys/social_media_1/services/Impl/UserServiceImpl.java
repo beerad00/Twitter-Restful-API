@@ -9,10 +9,13 @@ import com.cooksys.social_media_1.dtos.CredentialsRequestDto;
 import com.cooksys.social_media_1.dtos.TweetResponseDto;
 import com.cooksys.social_media_1.dtos.UserRequestDto;
 import com.cooksys.social_media_1.dtos.UserResponseDto;
+import com.cooksys.social_media_1.entities.Credentials;
 import com.cooksys.social_media_1.entities.Tweet;
 import com.cooksys.social_media_1.entities.User;
+import com.cooksys.social_media_1.exceptions.BadRequestException;
 import com.cooksys.social_media_1.exceptions.NotAuthorizedException;
 import com.cooksys.social_media_1.exceptions.NotFoundException;
+import com.cooksys.social_media_1.mappers.CredentialsMapper;
 import com.cooksys.social_media_1.mappers.TweetMapper;
 import com.cooksys.social_media_1.mappers.UserMapper;
 import com.cooksys.social_media_1.repositories.UserRepository;
@@ -27,9 +30,10 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final TweetMapper tweetMapper;
 	private final UserMapper userMapper;
+	private final CredentialsMapper credentialsMapper;
 	
-	// Helper method to validate the given username
-	private Optional<User> validateUsername(String username) {
+	// Helper method to validate and return the User for the given username
+	private Optional<User> getUser(String username) {
 		Optional<User> user = userRepository.findByCredentialsUsernameAndDeletedFalse(username);
 		
 		if(user.isEmpty()) {
@@ -42,7 +46,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<TweetResponseDto> getUserFeed(String username) {
 		// Validate and get user entity
-		User user = validateUsername(username).get();
+		User user = getUser(username).get();
 		
 		// Get users followed by this user
 		List<User> userFollowing = user.getFollowing();
@@ -59,7 +63,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<UserResponseDto> getUserFollowers(String username) {		
 		// Validate and get user's followers
-		List<User> followers = validateUsername(username).get().getFollowers();
+		List<User> followers = getUser(username).get().getFollowers();
 		
 		return userMapper.entitiesToDtos(followers);
 	}
@@ -67,7 +71,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<UserResponseDto> getFollowedUsers(String username) {
 		// Validate and get followed users
-		List<User> followedUsers = validateUsername(username).get().getFollowing();
+		List<User> followedUsers = getUser(username).get().getFollowing();
 		
 		
 		return userMapper.entitiesToDtos(followedUsers);
@@ -76,14 +80,37 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void followUser(String username, CredentialsRequestDto credentialsRequestDto) {
 		// Validate and get user to follow
-		User userToFollow = validateUsername(username).get();
+		User userToFollow = getUser(username).get();
+		
+		// Get User by provided Credentials username. There will only be 1
+		Credentials providedCredentials =  credentialsMapper.dtoToEntity(credentialsRequestDto);
+		if (providedCredentials.getUsername() == null || providedCredentials.getPassword() == null) {
+			throw new NotAuthorizedException("Please provide both a Username and a Password within the body of the request.");
+		}
+		User providedUser = getUser(providedCredentials.getUsername()).get();
+		
+		// Check that user for matching passwords
+		if (!providedUser.getCredentials().getPassword().equals(providedCredentials.getPassword())) {
+			throw new NotAuthorizedException("The provided password does not match our records. Please try again.");
+		}
+		
+		// Check if confirmed given credentials user already follows "username"
+		if (providedUser.getFollowing().contains(userToFollow)) {
+			throw new BadRequestException("You already follow this user!");
+		}
+		
+		// If all above pass, update following and return void
+		List<User> userList = providedUser.getFollowing();
+		userList.add(userToFollow);
+		providedUser.setFollowing(userList);
+		userRepository.saveAndFlush(providedUser);
 		return;
 	}
 
 	@Override
 	public UserResponseDto updateUsername(String username, UserRequestDto userRequestDto) {
 		// Validate given username
-		User userToUpdate = validateUsername(username).get();
+		User userToUpdate = getUser(username).get();
 		
 		// Check for credential match
 		User newUserInfo = userMapper.dtoToEntity(userRequestDto);
@@ -95,7 +122,4 @@ public class UserServiceImpl implements UserService {
 		userToUpdate.setProfile(newUserInfo.getProfile());
 		return userMapper.entityToDto(userRepository.saveAndFlush(userToUpdate));
 	}
-
-    //Add JPA repo
-    //Add methods (CRUD for REST) for user service
 }
