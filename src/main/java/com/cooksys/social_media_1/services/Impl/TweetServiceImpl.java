@@ -40,6 +40,14 @@ public class TweetServiceImpl implements TweetService {
 		return tweetMapper.entitiesToDTOs(tweet.getReplies());
 	}
 
+	@Override
+	public List<TweetResponseDto> getTweetReposts(Long id) {
+		// Validate provided Tweet ID
+		Tweet tweet = validateTweetId(id).get();
+		
+		return tweetMapper.entitiesToDTOs(tweet.getReposts());
+	}
+
 	// Add JPA repo
 	// Add methods (CRUD for REST) for user service
 }
