@@ -14,6 +14,7 @@ import com.cooksys.social_media_1.dtos.TweetResponseDto;
 import com.cooksys.social_media_1.dtos.UserRequestDto;
 import com.cooksys.social_media_1.dtos.UserResponseDto;
 import com.cooksys.social_media_1.entities.Credentials;
+import com.cooksys.social_media_1.entities.Profile;
 import com.cooksys.social_media_1.entities.Tweet;
 import com.cooksys.social_media_1.entities.User;
 import com.cooksys.social_media_1.exceptions.BadRequestException;
@@ -43,6 +44,9 @@ public class UserServiceImpl implements UserService {
 
 	// Helper method to validate the credentials passed in
 	private Optional<User> validateCredentials(CredentialsRequestDto credentialsRequestDto) {
+		if (credentialsRequestDto.getUsername() == null || credentialsRequestDto.getPassword() == null) {
+			throw new NotAuthorizedException("The given credentials are invalid. Please try again.");
+		}
 		Credentials credentials = credentialsMapper.dtoToEntity(credentialsRequestDto);
 		Optional<User> user = userRepository.findByCredentialsUsernameAndCredentialsPasswordAndDeletedFalse(credentials.getUsername(), credentials.getPassword());
 		
@@ -55,6 +59,8 @@ public class UserServiceImpl implements UserService {
 	// Helper method to validate and return the User for the given username
 	private Optional<User> getUser(String username) {
 		Optional<User> user = userRepository.findByCredentialsUsernameAndDeletedFalse(username);
+		
+		System.out.println(username);
 		
 		if(user.isEmpty()) {
 			throw new NotFoundException("The given username was not found. Please try again.");
@@ -130,18 +136,27 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResponseDto updateUsername(String username, UserRequestDto userRequestDto) {
+		if (userRequestDto.getCredentials() == null || userRequestDto.getProfile() == null) {
+			throw new BadRequestException("Please provide valid credentials AND a valid profile in your request");
+		}
+		
 		// Validate given username
 		User userToUpdate = getUser(username).get();
+		User newUserData = validateCredentials(userRequestDto.getCredentials()).get();
 		
 		// Check for credential match
-		User newUserInfo = userMapper.dtoToEntity(userRequestDto);
-		if (!userToUpdate.getCredentials().equals(newUserInfo.getCredentials())) {
+		if (!userToUpdate.getCredentials().equals(newUserData.getCredentials())) {
 			throw new NotAuthorizedException("The provided credentials are invalid. Please try again.");
 		}
 		
 		// Update and return username
-		userToUpdate.setProfile(newUserInfo.getProfile());
-		return userMapper.entityToDto(userRepository.saveAndFlush(userToUpdate));
+		Profile newProfile = newUserData.getProfile();
+		if (newProfile.getEmail() == null || newProfile.getFirstName() == null || newProfile.getLastName() == null || newProfile.getPhone() == null) {
+			return userMapper.entityToDto(userRepository.saveAndFlush(userToUpdate));
+		} else {
+			userToUpdate.setProfile(newUserData.getProfile());
+			return userMapper.entityToDto(userRepository.saveAndFlush(userToUpdate));
+		}
 	}
 	
 	private List<Tweet> checkForActiveTweets(List<Tweet> tweets) {
@@ -199,10 +214,6 @@ public class UserServiceImpl implements UserService {
 		return userMapper.entityToDto(newuser);
 
 	}
-
-
-
-
 
 	@Override
 	public List<TweetResponseDto> getMentions(String username) {
