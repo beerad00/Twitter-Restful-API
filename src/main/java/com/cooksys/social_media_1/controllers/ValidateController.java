@@ -1,11 +1,16 @@
 package com.cooksys.social_media_1.controllers;
 
+
+import com.cooksys.social_media_1.services.ValidateService;
+import org.springframework.web.bind.annotation.*;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.social_media_1.services.ValidateService;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,18 +28,14 @@ public class ValidateController {
     }
     
     @GetMapping("/username/exists/@{username}")
-    boolean validateUserExistence(@PathVariable("username") String username)
+    boolean validateUsernameExistence(@PathVariable("username") String username)
     {
-        //
-       // return null;
-        return false;
+        return validateService.validateUsernameExistence(username);
     }
 
     @GetMapping("/username/available/@{username}")
-    boolean validateUserAvailable(@PathVariable("username") String username)
+    boolean validateUsernameAvailable(@PathVariable("username") String username)
     {
-        //Just call above method
-        //return null;
-        return false;
+        return validateService.validateUsernameAvailable(username);
     }
 }

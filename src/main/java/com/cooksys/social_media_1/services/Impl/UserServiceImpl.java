@@ -1,5 +1,6 @@
 package com.cooksys.social_media_1.services.Impl;
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,18 +24,23 @@ import com.cooksys.social_media_1.mappers.TweetMapper;
 import com.cooksys.social_media_1.mappers.UserMapper;
 import com.cooksys.social_media_1.repositories.UserRepository;
 import com.cooksys.social_media_1.services.UserService;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-	
+
 	private final UserRepository userRepository;
 	private final TweetMapper tweetMapper;
 	private final UserMapper userMapper;
 	private final CredentialsMapper credentialsMapper;
 	
+
 	// Helper method to validate the credentials passed in
 	private Optional<User> validateCredentials(CredentialsRequestDto credentialsRequestDto) {
 		Credentials credentials = credentialsMapper.dtoToEntity(credentialsRequestDto);
@@ -45,7 +51,7 @@ public class UserServiceImpl implements UserService {
 		
 		return user;
 	}
-	
+
 	// Helper method to validate and return the User for the given username
 	private Optional<User> getUser(String username) {
 		Optional<User> user = userRepository.findByCredentialsUsernameAndDeletedFalse(username);
@@ -57,6 +63,7 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 	
+
 	@Override
 	public List<TweetResponseDto> getUserFeed(String username) {
 		// Validate and get user entity
@@ -146,6 +153,49 @@ public class UserServiceImpl implements UserService {
 		
 		return activeTweets;
 	}
+
+
+	public List<TweetResponseDto>  getUserTweets(String username)
+	{
+		List<User> users = this.userRepository.findAll();
+		users= users.stream().filter(user-> user.getCredentials().getUsername().equals(username)).collect(Collectors.toList());
+		if(users.isEmpty())
+			throw new NotFoundException("User not found");
+
+		return tweetMapper.entitestoDtos(users.get(0).getTweets().stream().filter(tweet->{return !tweet.isDeleted();}).collect(Collectors.toList()));
+
+	}
+
+	public UserResponseDto postUser(UserRequestDto userRequestDto)
+	{
+		if(userRepository.findAll().stream().anyMatch(user->{return user.getCredentials().getUsername().equals(userRequestDto.getCredentials().getUsername());}) && userRepository.findAll().stream().anyMatch(user->{return user.getCredentials().getPassword().equals(userRequestDto.getCredentials().getPassword());}))
+		{
+			User olduser = userRepository.findAll().stream().filter(user->{return user.getCredentials().getUsername().equals(userRequestDto.getCredentials().getUsername());}).collect(Collectors.toList()).get(0);
+			olduser.setDeleted(false);
+			userRepository.save(olduser);
+			return userMapper.entityToDto(olduser);
+		}
+
+		if(userRepository.findAll().stream().anyMatch(user->{return user.getCredentials().getUsername().equals(userRequestDto.getCredentials().getUsername());}) && !userRepository.findAll().stream().anyMatch(user->{return user.getCredentials().getPassword().equals(userRequestDto.getCredentials().getPassword());}))
+		{
+			throw new NotFoundException("User already exist");
+		}
+
+		if(userRequestDto.getCredentials()==null||userRequestDto.getProfile()==null||userRequestDto.getCredentials().getUsername()==null||userRequestDto.getCredentials().getUsername().isEmpty()||userRequestDto.getCredentials().getPassword()==null||userRequestDto.getCredentials().getPassword().isEmpty()||userRequestDto.getProfile().getEmail()==null||userRequestDto.getProfile().getEmail().isEmpty())
+		{
+			throw new NotFoundException("Required field are not provided");
+		}
+
+
+		User newuser = userMapper.dtoToEntity(userRequestDto);
+		userRepository.save(newuser);
+		return userMapper.entityToDto(newuser);
+
+	}
+
+
+
+
 
 	@Override
 	public List<TweetResponseDto> getMentions(String username) {

@@ -1,19 +1,7 @@
 package com.cooksys.social_media_1.services.Impl;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.springframework.stereotype.Service;
-
-import com.cooksys.social_media_1.dtos.CredentialsRequestDto;
-import com.cooksys.social_media_1.dtos.TweetRequestDto;
-import com.cooksys.social_media_1.dtos.TweetResponseDto;
-import com.cooksys.social_media_1.dtos.UserResponseDto;
+import com.cooksys.social_media_1.dtos.*;
 import com.cooksys.social_media_1.entities.Credentials;
 import com.cooksys.social_media_1.entities.Hashtag;
 import com.cooksys.social_media_1.entities.Tweet;
@@ -22,25 +10,115 @@ import com.cooksys.social_media_1.exceptions.BadRequestException;
 import com.cooksys.social_media_1.exceptions.NotAuthorizedException;
 import com.cooksys.social_media_1.exceptions.NotFoundException;
 import com.cooksys.social_media_1.mappers.CredentialsMapper;
+import com.cooksys.social_media_1.mappers.HashtagMapper;
 import com.cooksys.social_media_1.mappers.TweetMapper;
 import com.cooksys.social_media_1.mappers.UserMapper;
 import com.cooksys.social_media_1.repositories.HashtagRepository;
-import com.cooksys.social_media_1.dtos.HashtagResponseDto;
-import com.cooksys.social_media_1.mappers.HashtagMapper;
 import com.cooksys.social_media_1.repositories.TweetRepository;
 import com.cooksys.social_media_1.repositories.UserRepository;
 import com.cooksys.social_media_1.services.TweetService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
 public class TweetServiceImpl implements TweetService {
-
+	
 	private final TweetRepository tweetRepository;
-	private final UserRepository userRepository;
+	private final TweetMapper tweetMapper;
+	
+	// Helper method to validate the given username
+	private Optional<Tweet> validateTweetId(Long id) {
+		Optional<Tweet> tweet = tweetRepository.findByIdAndDeletedFalse(id);
+        if (tweet.isEmpty()) {
+            throw new NotFoundException("A tweet with the given ID was not found. Please try again.");
+        }
+
+        return tweet;
+    }
+
+
+    private final UserRepository userRepository;
+    public TweetResponseDto getTweet(int id)
+    {
+        if (!tweetRepository.existsById((long) id) || tweetRepository.findById((long)id).get().isDeleted())
+        {
+            throw new NotFoundException("Tweet not found");
+        }
+        return tweetMapper.entityToDto(tweetRepository.getById((long) id));
+    }
+
+    public TweetResponseDto deleteTweet(int id, CredentialsRequestDto credentialsRequestDto)
+    {
+
+        if (!tweetRepository.existsById((long) id))
+        {
+            throw new NotFoundException("Tweet not found");
+        }
+
+        if (!((tweetRepository.findById((long) id).get().getAuthor().getCredentials().getUsername()).equals(credentialsRequestDto.getUsername())) || !((tweetRepository.findById((long) id).get().getAuthor().getCredentials().getPassword()).equals(credentialsRequestDto.getPassword())))
+        {
+            throw new NotFoundException("Unauthorized credential provided");
+        }
+        Tweet tweet = tweetRepository.findById((long) id).get();
+        tweet.setDeleted(true);
+        tweetRepository.save(tweet);
+        return tweetMapper.entityToDto(tweet);
+
+    }
+
+    public void postTweetLike(int id, CredentialsRequestDto credentialsRequestDto)
+    {
+        if (!tweetRepository.existsById((long) id) || tweetRepository.findById((long)id).get().isDeleted())
+        {
+            throw new NotFoundException("Tweet not found");
+        }
+
+        if (!((tweetRepository.findById((long) id).get().getAuthor().getCredentials().getUsername()).equals(credentialsRequestDto.getUsername())) || !((tweetRepository.findById((long) id).get().getAuthor().getCredentials().getPassword()).equals(credentialsRequestDto.getPassword())))
+        {
+            throw new NotFoundException("Unauthorized credential provided");
+        }
+
+        User user = userRepository.findAll().stream().filter(users->{return users.getCredentials().getUsername().equals(credentialsRequestDto.getUsername());}).collect(Collectors.toList()).get(0);
+        user.getLikedTweets().add(tweetRepository.findById((long)id).get());
+        userRepository.save(user);
+
+    }
+
+    public ContextDto getTweetContext(int id)
+    {
+        List<Tweet> alltweets = tweetRepository.findAll();
+        Tweet contexttweet = tweetRepository.findById((long)id).get();
+        Comparator<Tweet> tweetComparator = new Comparator<Tweet>() {
+            @Override
+            public int compare(Tweet o1, Tweet o2) {
+                return o1.getPosted().compareTo(o2.getPosted());
+
+        }
+    };
+        Collections.sort(alltweets,tweetComparator);
+        int contextindex = alltweets.indexOf(contexttweet);
+        List<Tweet> before = alltweets.subList(0,contextindex);
+        List<Tweet> after = alltweets.subList(contextindex+1, alltweets.size()-1);
+        ContextDto contextDto = new ContextDto();
+        contextDto.setBefore(tweetMapper.entitestoDtos(before));
+        contextDto.setAfter(tweetMapper.entitestoDtos(after));
+        contextDto.setTarget(tweetMapper.entityToDto(contexttweet));
+        return contextDto;
+    }
+
+
+
 	private final HashtagRepository hashtagRepository;
 	private final CredentialsMapper credentialsMapper;
-	private final TweetMapper tweetMapper;
 	private final UserMapper userMapper;
 	private final HashtagMapper hashtagMapper;
 	
@@ -54,17 +132,7 @@ public class TweetServiceImpl implements TweetService {
 		
 		return user;
 	}
-	
-	// Helper method to validate the given tweet id exists
-	private Optional<Tweet> validateTweetId(Long id) {
-		Optional<Tweet> tweet = tweetRepository.findByIdAndDeletedFalse(id);
 
-		if (tweet.isEmpty()) {
-			throw new NotFoundException("A tweet with the given ID was not found. Please try again.");
-		}
-
-		return tweet;
-	}
 
 	// Helper method to validate and return the User for the given username
 	private Optional<User> getUser(String username) {
@@ -254,3 +322,4 @@ public class TweetServiceImpl implements TweetService {
 		return tweetMapper.entityToDto(repostTweet);
 	}
 }
+

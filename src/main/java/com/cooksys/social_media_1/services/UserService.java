@@ -9,6 +9,9 @@ import com.cooksys.social_media_1.dtos.UserResponseDto;
 
 public interface UserService {
 
+
+	List<TweetResponseDto>  getUserTweets(String username);
+
 	List<TweetResponseDto> getUserFeed(String username);
 
 	List<UserResponseDto> getUserFollowers(String username);
@@ -18,6 +21,9 @@ public interface UserService {
 	void followUser(String username, CredentialsRequestDto credentialsRequestDto);
 
 	UserResponseDto updateUsername(String username, UserRequestDto userRequestDto);
+
+	UserResponseDto postUser(UserRequestDto userRequestDto);
+
 	
 	List<TweetResponseDto> getMentions(String username);
 

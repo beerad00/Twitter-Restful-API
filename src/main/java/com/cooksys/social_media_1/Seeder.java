@@ -1,6 +1,7 @@
 package com.cooksys.social_media_1;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -74,8 +75,12 @@ public class Seeder implements CommandLineRunner {
 		user2.setFollowing(Arrays.asList(new User[] { user1 }));
 		user2.setFollowers(Arrays.asList(new User[] { user1 }));
 		
+<<<<<<< HEAD
+		userRepository.saveAll(Arrays.asList(new User[] { user1, user2 }));
+=======
 		userRepository.saveAllAndFlush(Arrays.asList(new User[] { user1, user2, user3 }));
 
+>>>>>>> 321a9d9bea67a4d7217fac08af9fd4104f5805fc
 		// User 1 Tweets
 		Tweet tweet1 = new Tweet();
 		tweet1.setAuthor(user1);
@@ -137,6 +142,19 @@ public class Seeder implements CommandLineRunner {
 		hashtag2.setTweets(Arrays.asList(new Tweet[] { tweet2, tweet6 }));
 		hashtag2.setFirstUsed(tweet2.getPosted());
 		hashtag2.setLastUsed(tweet6.getPosted());
+
+
+		for(Tweet t:Arrays.asList(new Tweet[] {tweet1, tweet5,}))
+			t.setHashtags(Arrays.asList(new Hashtag[]{hashtag1}));
+
+		for(Tweet t:Arrays.asList(new Tweet[] {tweet2,  tweet6}))
+			t.setHashtags(Arrays.asList(new Hashtag[]{ hashtag2}));
+
+		hashtagRepository.saveAll(Arrays.asList(new Hashtag[] { hashtag1, hashtag2 }));
+		tweetRepository.saveAll(Arrays.asList(new Tweet[] {tweet1, tweet2, tweet5, tweet6}));
+
+
+
 		
 		hashtagRepository.saveAllAndFlush(Arrays.asList(new Hashtag[] { hashtag1, hashtag2 }));
 		
@@ -183,5 +201,6 @@ public class Seeder implements CommandLineRunner {
 		userRepository.saveAllAndFlush(Arrays.asList(new User[] { user1, user2, user3 }));
 		tweetRepository.saveAllAndFlush(Arrays.asList(new Tweet[] { tweet1, tweet2, tweet3, tweet4, tweet5,
 				tweet6, tweet7, tweet8, response1, response2 }));
+
 	}
 }

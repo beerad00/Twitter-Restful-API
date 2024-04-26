@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -51,6 +53,18 @@ public class UserController {
 	public UserResponseDto updateUsername(@RequestBody UserRequestDto userRequestDto, @PathVariable String username) {
 		return userService.updateUsername(username, userRequestDto);
 	}
+
+	@GetMapping("/@{username}/tweets")
+	public List<TweetResponseDto> getUserTweets(@PathVariable("username") String username)
+	{
+		return userService.getUserTweets(username);
+	}
+	@PostMapping
+	public UserResponseDto postUser(@RequestBody UserRequestDto userRequestDto)
+	{
+		return userService.postUser(userRequestDto);
+	}
+
 	
 	@GetMapping
 	public List<UserResponseDto> getUsers() {

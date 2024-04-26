@@ -1,5 +1,12 @@
 package com.cooksys.social_media_1.services;
 
-public interface HashtagService {
+import com.cooksys.social_media_1.dtos.HashtagResponseDto;
+import com.cooksys.social_media_1.dtos.TweetResponseDto;
 
+import java.util.List;
+
+public interface HashtagService {
+    List<HashtagResponseDto> retrieveHashtags();
+
+    List<TweetResponseDto> retriveLabeledHashtag(String label);
 }
