@@ -27,7 +27,7 @@ public class Seeder implements CommandLineRunner {
 	private final HashtagRepository hashtagRepository;
 
 	/**
-	 * This method seeds the database with 2 users. Each user has 4 tweets and
+	 * This method seeds the database with 3 users. First two users have 4 tweets and
 	 * one of those tweets has 1 response.
 	 */
 	@Override
@@ -56,12 +56,31 @@ public class Seeder implements CommandLineRunner {
 		user2Profile.setLastName("Smith");
 		user2Profile.setPhone("1111111111");
 		user2.setProfile(user2Profile);
+		
+		User user3 = new User();
+		Credentials user3Creds = new Credentials();
+		user3Creds.setUsername("user3");
+		user3Creds.setPassword("pw3");
+		user3.setCredentials(user3Creds);
+		Profile user3Profile = new Profile();
+		user3Profile.setEmail("user3@email.com");
+		user3Profile.setFirstName("Mister");
+		user3Profile.setLastName("Three");
+		user3Profile.setPhone("3333333333");
+		user3.setProfile(user3Profile);
 
 		// Set user followings
 		user1.setFollowing(Arrays.asList(new User[] { user2 }));
+		user1.setFollowers(Arrays.asList(new User[] { user2 }));
 		user2.setFollowing(Arrays.asList(new User[] { user1 }));
+		user2.setFollowers(Arrays.asList(new User[] { user1 }));
 		
+<<<<<<< HEAD
 		userRepository.saveAll(Arrays.asList(new User[] { user1, user2 }));
+=======
+		userRepository.saveAllAndFlush(Arrays.asList(new User[] { user1, user2, user3 }));
+
+>>>>>>> 321a9d9bea67a4d7217fac08af9fd4104f5805fc
 		// User 1 Tweets
 		Tweet tweet1 = new Tweet();
 		tweet1.setAuthor(user1);
@@ -101,7 +120,6 @@ public class Seeder implements CommandLineRunner {
 		response1.setAuthor(user1);
 		response1.setInReplyTo(tweet5);
 		response1.setContent("I agree! Nice first tweet!");
-		user1.setTweetsMentionedIn(Arrays.asList(new Tweet[] { response1 }));
 		
 		// User 2 Response
 		Tweet response2 = new Tweet();
@@ -109,9 +127,8 @@ public class Seeder implements CommandLineRunner {
 		response2.setInReplyTo(tweet1);
 		response2.setContent("I don't agree! Terrible first tweet!");
 
-		tweetRepository.saveAll(Arrays.asList(new Tweet[] { tweet1, tweet2, tweet3, tweet4, tweet5,
+		tweetRepository.saveAllAndFlush(Arrays.asList(new Tweet[] { tweet1, tweet2, tweet3, tweet4, tweet5,
 				tweet6, tweet7, tweet8, response1, response2 }));
-		userRepository.saveAll(Arrays.asList(new User[] { user1, user2 }));
 		
 		//Hashtags
 		Hashtag hashtag1 = new Hashtag();
@@ -126,6 +143,7 @@ public class Seeder implements CommandLineRunner {
 		hashtag2.setFirstUsed(tweet2.getPosted());
 		hashtag2.setLastUsed(tweet6.getPosted());
 
+
 		for(Tweet t:Arrays.asList(new Tweet[] {tweet1, tweet5,}))
 			t.setHashtags(Arrays.asList(new Hashtag[]{hashtag1}));
 
@@ -134,10 +152,55 @@ public class Seeder implements CommandLineRunner {
 
 		hashtagRepository.saveAll(Arrays.asList(new Hashtag[] { hashtag1, hashtag2 }));
 		tweetRepository.saveAll(Arrays.asList(new Tweet[] {tweet1, tweet2, tweet5, tweet6}));
-		//Hashtag t = hashtagRepository.findById((long)1).get();
-		Tweet w = tweetRepository.findById((long)1).get();
-		List<Hashtag> hashs = tweetRepository.findById((long)1).get().getHashtags();
-		//System.out.println(w.getHashtags().get(0).getLabel());
-		//System.out.println(t.getTweets().get(0));
+
+
+
+		
+		hashtagRepository.saveAllAndFlush(Arrays.asList(new Hashtag[] { hashtag1, hashtag2 }));
+		
+		tweet1.setHashtags(Arrays.asList(new Hashtag[] { hashtag1 }));
+		tweet5.setHashtags(Arrays.asList(new Hashtag[] { hashtag1 }));
+		tweet2.setHashtags(Arrays.asList(new Hashtag[] { hashtag2 }));
+		tweet6.setHashtags(Arrays.asList(new Hashtag[] { hashtag2 }));
+		
+		tweetRepository.saveAllAndFlush(Arrays.asList(new Tweet[] { tweet1, tweet2, tweet5, tweet6 }));
+		
+		//Tweet likes
+		user1.setLikedTweets(Arrays.asList(new Tweet[] { tweet1, tweet3, tweet6, tweet8, response1 }));
+		user2.setLikedTweets(Arrays.asList(new Tweet[] { tweet1, tweet3, tweet5, tweet6 }));
+		user3.setLikedTweets(Arrays.asList(new Tweet[] { tweet3, tweet4, tweet7, tweet8, response2 }));
+		tweet1.setLikedByUsers(Arrays.asList(new User[] { user1, user2 }));
+		tweet3.setLikedByUsers(Arrays.asList(new User[] { user1, user2, user3 }));
+		tweet4.setLikedByUsers(Arrays.asList(new User[] { user3 }));
+		tweet5.setLikedByUsers(Arrays.asList(new User[] { user2 }));
+		tweet6.setLikedByUsers(Arrays.asList(new User[] { user1, user2 }));
+		tweet7.setLikedByUsers(Arrays.asList(new User[] { user3 }));
+		tweet8.setLikedByUsers(Arrays.asList(new User[] { user1, user3 }));
+		response1.setLikedByUsers(Arrays.asList(new User[] { user1 }));
+		response2.setLikedByUsers(Arrays.asList(new User[] { user3 }));
+		
+		userRepository.saveAllAndFlush(Arrays.asList(new User[] { user1, user2, user3 }));
+		tweetRepository.saveAllAndFlush(Arrays.asList(new Tweet[] { tweet1, tweet2, tweet3, tweet4, tweet5,
+				tweet6, tweet7, tweet8, response1, response2 }));
+		
+		
+		//Tweet mentions
+		user1.setTweetsMentionedIn(Arrays.asList(new Tweet[] { tweet1, tweet3, tweet6, tweet8, response1 }));
+		user2.setTweetsMentionedIn(Arrays.asList(new Tweet[] { tweet1, tweet3, tweet5, tweet6 }));
+		user3.setTweetsMentionedIn(Arrays.asList(new Tweet[] { tweet3, tweet4, tweet7, tweet8, response2 }));
+		tweet1.setMentionedUsers(Arrays.asList(new User[] { user1, user2 }));
+		tweet3.setMentionedUsers(Arrays.asList(new User[] { user1, user2, user3 }));
+		tweet4.setMentionedUsers(Arrays.asList(new User[] { user3 }));
+		tweet5.setMentionedUsers(Arrays.asList(new User[] { user2 }));
+		tweet6.setMentionedUsers(Arrays.asList(new User[] { user1, user2 }));
+		tweet7.setMentionedUsers(Arrays.asList(new User[] { user3 }));
+		tweet8.setMentionedUsers(Arrays.asList(new User[] { user1, user3 }));
+		response1.setMentionedUsers(Arrays.asList(new User[] { user1 }));
+		response2.setMentionedUsers(Arrays.asList(new User[] { user3 }));
+		
+		userRepository.saveAllAndFlush(Arrays.asList(new User[] { user1, user2, user3 }));
+		tweetRepository.saveAllAndFlush(Arrays.asList(new Tweet[] { tweet1, tweet2, tweet3, tweet4, tweet5,
+				tweet6, tweet7, tweet8, response1, response2 }));
+
 	}
 }
