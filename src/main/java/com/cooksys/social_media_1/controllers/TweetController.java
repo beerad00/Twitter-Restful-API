@@ -55,7 +55,8 @@ public class TweetController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public TweetResponseDto createNewReplyTweet(@RequestBody TweetRequestDto tweetRequestDto, @PathVariable Long id) {
 		return tweetService.createNewReplyTweet(tweetRequestDto, id);
-
+	}
+	
 	@GetMapping
 	public List<TweetResponseDto> getTweets() {
 		return tweetService.getTweets();

@@ -26,17 +26,7 @@ import com.cooksys.social_media_1.mappers.TweetMapper;
 import com.cooksys.social_media_1.mappers.UserMapper;
 import com.cooksys.social_media_1.repositories.HashtagRepository;
 import com.cooksys.social_media_1.dtos.HashtagResponseDto;
-import com.cooksys.social_media_1.dtos.TweetResponseDto;
-import com.cooksys.social_media_1.dtos.UserResponseDto;
-import com.cooksys.social_media_1.entities.Credentials;
-import com.cooksys.social_media_1.entities.Tweet;
-import com.cooksys.social_media_1.entities.User;
-import com.cooksys.social_media_1.exceptions.NotAuthorizedException;
-import com.cooksys.social_media_1.exceptions.NotFoundException;
-import com.cooksys.social_media_1.mappers.CredentialsMapper;
 import com.cooksys.social_media_1.mappers.HashtagMapper;
-import com.cooksys.social_media_1.mappers.TweetMapper;
-import com.cooksys.social_media_1.mappers.UserMapper;
 import com.cooksys.social_media_1.repositories.TweetRepository;
 import com.cooksys.social_media_1.repositories.UserRepository;
 import com.cooksys.social_media_1.services.TweetService;
@@ -53,9 +43,6 @@ public class TweetServiceImpl implements TweetService {
 	private final TweetMapper tweetMapper;
 	private final UserMapper userMapper;
 	private final HashtagMapper hashtagMapper;
-	private final UserMapper userMapper;
-	private final UserRepository userRepository;
-	private final CredentialsMapper credentialsMapper;
 	
 	// Helper method to validate the credentials passed in
 	private Optional<User> validateCredentials(CredentialsRequestDto credentialsRequestDto) {
