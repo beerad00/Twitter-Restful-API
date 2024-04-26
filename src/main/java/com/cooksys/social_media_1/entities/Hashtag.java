@@ -1,11 +1,10 @@
 package com.cooksys.social_media_1.entities;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,11 +27,11 @@ public class Hashtag {
 	private String label;
 	
 	@Column(nullable = false)
-	@CreatedDate
-	private Timestamp firstUsed = Timestamp.valueOf(LocalDateTime.now());
+	@CreationTimestamp
+	private Timestamp firstUsed;
 
 	@Column(nullable = false)
-    @LastModifiedDate
+    @UpdateTimestamp
 	private Timestamp lastUsed;
 	
     @ManyToMany(mappedBy = "hashtags")

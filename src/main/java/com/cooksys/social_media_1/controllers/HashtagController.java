@@ -2,7 +2,6 @@ package com.cooksys.social_media_1.controllers;
 
 import com.cooksys.social_media_1.dtos.HashtagResponseDto;
 import com.cooksys.social_media_1.dtos.TweetResponseDto;
-import com.cooksys.social_media_1.entities.Hashtag;
 import com.cooksys.social_media_1.services.HashtagService;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;

@@ -193,7 +193,6 @@ public class TweetServiceImpl implements TweetService {
 				// Create new hashtag here
 				Hashtag newHashtag = new Hashtag();
 				newHashtag.setLabel(matcher.group());
-				newHashtag.setLastUsed(Timestamp.valueOf(LocalDateTime.now()));
 				tweetHashtags.add(hashtagRepository.saveAndFlush(newHashtag));
 			} else {
 				// Add hashtag to list
