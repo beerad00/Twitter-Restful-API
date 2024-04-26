@@ -2,6 +2,7 @@ package com.cooksys.social_media_1.controllers;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -52,6 +53,7 @@ public class UserController {
 	public UserResponseDto updateUsername(@RequestBody UserRequestDto userRequestDto, @PathVariable String username) {
 		return userService.updateUsername(username, userRequestDto);
 	}
+
 	@GetMapping("/@{username}/tweets")
 	public List<TweetResponseDto> getUserTweets(@PathVariable("username") String username)
 	{
@@ -61,5 +63,31 @@ public class UserController {
 	public UserResponseDto postUser(@RequestBody UserRequestDto userRequestDto)
 	{
 		return userService.postUser(userRequestDto);
+	}
+
+	
+	@GetMapping
+	public List<UserResponseDto> getUsers() {
+		return userService.getUsers();
+	}
+	
+	@GetMapping("/@{username}")
+	public UserResponseDto getOneUser(@PathVariable String username) {
+		return userService.getOneUser(username);
+	}
+	
+	@GetMapping("/@{username}/mentions")
+	public List<TweetResponseDto> getMentions(@PathVariable String username) {
+		return userService.getMentions(username);
+	}
+	
+	@DeleteMapping("/@{username}")
+	public UserResponseDto deleteUser(@PathVariable String username, @RequestBody CredentialsRequestDto credentialsRequestDto) {
+		return userService.deleteUser(username, credentialsRequestDto);
+	}
+	
+	@PostMapping("/@{username}/unfollow")
+	public void unfollow(@PathVariable String username, @RequestBody CredentialsRequestDto credentialsRequestDto) {
+		userService.unfollow(username, credentialsRequestDto);
 	}
 }

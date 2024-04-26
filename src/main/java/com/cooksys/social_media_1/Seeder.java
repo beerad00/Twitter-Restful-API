@@ -101,6 +101,7 @@ public class Seeder implements CommandLineRunner {
 		response1.setAuthor(user1);
 		response1.setInReplyTo(tweet5);
 		response1.setContent("I agree! Nice first tweet!");
+		user1.setTweetsMentionedIn(Arrays.asList(new Tweet[] { response1 }));
 		
 		// User 2 Response
 		Tweet response2 = new Tweet();
@@ -110,6 +111,7 @@ public class Seeder implements CommandLineRunner {
 
 		tweetRepository.saveAll(Arrays.asList(new Tweet[] { tweet1, tweet2, tweet3, tweet4, tweet5,
 				tweet6, tweet7, tweet8, response1, response2 }));
+		userRepository.saveAll(Arrays.asList(new User[] { user1, user2 }));
 		
 		//Hashtags
 		Hashtag hashtag1 = new Hashtag();

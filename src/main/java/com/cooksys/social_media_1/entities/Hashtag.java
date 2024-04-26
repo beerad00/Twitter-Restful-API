@@ -1,6 +1,7 @@
 package com.cooksys.social_media_1.entities;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -28,7 +29,7 @@ public class Hashtag {
 	
 	@Column(nullable = false)
 	@CreatedDate
-	private Timestamp firstUsed;
+	private Timestamp firstUsed = Timestamp.valueOf(LocalDateTime.now());
 
 	@Column(nullable = false)
     @LastModifiedDate
