@@ -21,5 +21,6 @@ public interface UserService {
 	void followUser(String username, CredentialsRequestDto credentialsRequestDto);
 
 	UserResponseDto updateUsername(String username, UserRequestDto userRequestDto);
+	UserResponseDto postUser(UserRequestDto userRequestDto);
 
 }

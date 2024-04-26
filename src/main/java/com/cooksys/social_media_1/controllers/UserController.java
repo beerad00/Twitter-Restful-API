@@ -57,4 +57,9 @@ public class UserController {
 	{
 		return userService.getUserTweets(username);
 	}
+	@PostMapping
+	public UserResponseDto postUser(@RequestBody UserRequestDto userRequestDto)
+	{
+		return userService.postUser(userRequestDto);
+	}
 }

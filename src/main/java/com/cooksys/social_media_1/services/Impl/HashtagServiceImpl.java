@@ -8,6 +8,7 @@ import com.cooksys.social_media_1.exceptions.NotFoundException;
 import com.cooksys.social_media_1.mappers.HashtagMapper;
 import com.cooksys.social_media_1.mappers.TweetMapper;
 import com.cooksys.social_media_1.repositories.HashtagRepository;
+import com.cooksys.social_media_1.repositories.TweetRepository;
 import org.springframework.stereotype.Service;
 
 import com.cooksys.social_media_1.services.HashtagService;
@@ -26,6 +27,7 @@ public class HashtagServiceImpl implements HashtagService {
     private final HashtagRepository hashtagRepository;
     private final HashtagMapper hashtagMapper;
     private final TweetMapper tweetMapper;
+    private final TweetRepository tweetRepository;
 
     public List<HashtagResponseDto> retrieveHashtags()
     {
@@ -34,11 +36,11 @@ public class HashtagServiceImpl implements HashtagService {
 
     public List<TweetResponseDto> retriveLabeledHashtag(String label)
     {
-        List<Hashtag> hashtags = this.hashtagRepository.findAll();
-        hashtags = hashtags.stream().filter(hashtag->{return hashtag.getLabel().equals(label);}).collect(Collectors.toList());
-        if(hashtags.isEmpty())
-            throw new NotFoundException("Hashtag not found");
-        List<Tweet>  tweets= hashtags.get(0).getTweets().stream().filter(tweet->{return !tweet.isDeleted();}).collect(Collectors.toList());
+        Hashtag hashtag = hashtagRepository.findAll().stream().filter(hashtags ->{return hashtags.getLabel().equals(label);}).collect(Collectors.toList()).get(0);
+
+        List<Tweet> tweets= tweetRepository.findAll().stream().filter(tweet->{return !tweet.isDeleted();}).collect(Collectors.toList());
+        tweets = tweets.stream().filter(tweet -> {return tweet.getHashtags().contains(hashtag);}).collect(Collectors.toList());
+
         Comparator<Tweet> tweetsorter = new Comparator<Tweet>() {
             @Override
             public int compare(Tweet o1, Tweet o2) {

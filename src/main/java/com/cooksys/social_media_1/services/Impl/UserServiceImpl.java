@@ -102,9 +102,35 @@ public class UserServiceImpl implements UserService {
 		users= users.stream().filter(user-> user.getCredentials().getUsername().equals(username)).collect(Collectors.toList());
 		if(users.isEmpty())
 			throw new NotFoundException("User not found");
-		User user = users.get(0);
 
-		return tweetMapper.entitestoDtos(user.getTweets());
+		return tweetMapper.entitestoDtos(users.get(0).getTweets().stream().filter(tweet->{return !tweet.isDeleted();}).collect(Collectors.toList()));
+
+	}
+
+	public UserResponseDto postUser(UserRequestDto userRequestDto)
+	{
+		if(userRepository.findAll().stream().anyMatch(user->{return user.getCredentials().getUsername().equals(userRequestDto.getCredentials().getUsername());}) && userRepository.findAll().stream().anyMatch(user->{return user.getCredentials().getPassword().equals(userRequestDto.getCredentials().getPassword());}))
+		{
+			User olduser = userRepository.findAll().stream().filter(user->{return user.getCredentials().getUsername().equals(userRequestDto.getCredentials().getUsername());}).collect(Collectors.toList()).get(0);
+			olduser.setDeleted(false);
+			userRepository.save(olduser);
+			return userMapper.entityToDto(olduser);
+		}
+
+		if(userRepository.findAll().stream().anyMatch(user->{return user.getCredentials().getUsername().equals(userRequestDto.getCredentials().getUsername());}) && !userRepository.findAll().stream().anyMatch(user->{return user.getCredentials().getPassword().equals(userRequestDto.getCredentials().getPassword());}))
+		{
+			throw new NotFoundException("User already exist");
+		}
+
+		if(userRequestDto.getCredentials()==null||userRequestDto.getProfile()==null||userRequestDto.getCredentials().getUsername()==null||userRequestDto.getCredentials().getUsername().isEmpty()||userRequestDto.getCredentials().getPassword()==null||userRequestDto.getCredentials().getPassword().isEmpty()||userRequestDto.getProfile().getEmail()==null||userRequestDto.getProfile().getEmail().isEmpty())
+		{
+			throw new NotFoundException("Required field are not provided");
+		}
+
+
+		User newuser = userMapper.dtoToEntity(userRequestDto);
+		userRepository.save(newuser);
+		return userMapper.entityToDto(newuser);
 
 	}
 

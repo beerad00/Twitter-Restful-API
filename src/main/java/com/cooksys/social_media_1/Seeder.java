@@ -1,14 +1,17 @@
 package com.cooksys.social_media_1;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.cooksys.social_media_1.entities.Credentials;
+import com.cooksys.social_media_1.entities.Hashtag;
 import com.cooksys.social_media_1.entities.Profile;
 import com.cooksys.social_media_1.entities.Tweet;
 import com.cooksys.social_media_1.entities.User;
+import com.cooksys.social_media_1.repositories.HashtagRepository;
 import com.cooksys.social_media_1.repositories.TweetRepository;
 import com.cooksys.social_media_1.repositories.UserRepository;
 
@@ -21,6 +24,7 @@ public class Seeder implements CommandLineRunner {
 	//private final HashtagRepository hashtagRepository;
 	private final TweetRepository tweetRepository;
 	private final UserRepository userRepository;
+	private final HashtagRepository hashtagRepository;
 
 	/**
 	 * This method seeds the database with 2 users. Each user has 4 tweets and
@@ -58,7 +62,6 @@ public class Seeder implements CommandLineRunner {
 		user2.setFollowing(Arrays.asList(new User[] { user1 }));
 		
 		userRepository.saveAll(Arrays.asList(new User[] { user1, user2 }));
-
 		// User 1 Tweets
 		Tweet tweet1 = new Tweet();
 		tweet1.setAuthor(user1);
@@ -107,6 +110,32 @@ public class Seeder implements CommandLineRunner {
 
 		tweetRepository.saveAll(Arrays.asList(new Tweet[] { tweet1, tweet2, tweet3, tweet4, tweet5,
 				tweet6, tweet7, tweet8, response1, response2 }));
+		
+		//Hashtags
+		Hashtag hashtag1 = new Hashtag();
+		hashtag1.setLabel("first");
+		hashtag1.setTweets(Arrays.asList(new Tweet[] { tweet1, tweet5 }));
+		hashtag1.setFirstUsed(tweet1.getPosted());
+		hashtag1.setLastUsed(tweet5.getPosted());
+		
+		Hashtag hashtag2 = new Hashtag();
+		hashtag2.setLabel("second");
+		hashtag2.setTweets(Arrays.asList(new Tweet[] { tweet2, tweet6 }));
+		hashtag2.setFirstUsed(tweet2.getPosted());
+		hashtag2.setLastUsed(tweet6.getPosted());
 
+		for(Tweet t:Arrays.asList(new Tweet[] {tweet1, tweet5,}))
+			t.setHashtags(Arrays.asList(new Hashtag[]{hashtag1}));
+
+		for(Tweet t:Arrays.asList(new Tweet[] {tweet2,  tweet6}))
+			t.setHashtags(Arrays.asList(new Hashtag[]{ hashtag2}));
+
+		hashtagRepository.saveAll(Arrays.asList(new Hashtag[] { hashtag1, hashtag2 }));
+		tweetRepository.saveAll(Arrays.asList(new Tweet[] {tweet1, tweet2, tweet5, tweet6}));
+		//Hashtag t = hashtagRepository.findById((long)1).get();
+		Tweet w = tweetRepository.findById((long)1).get();
+		List<Hashtag> hashs = tweetRepository.findById((long)1).get().getHashtags();
+		//System.out.println(w.getHashtags().get(0).getLabel());
+		//System.out.println(t.getTweets().get(0));
 	}
 }
