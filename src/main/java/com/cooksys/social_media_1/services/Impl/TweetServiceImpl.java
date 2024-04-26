@@ -104,11 +104,21 @@ public class TweetServiceImpl implements TweetService {
 		return tweet;
 	}
 
+	private List<Tweet> checkForActiveTweets(List<Tweet> tweets) {
+		List<Tweet> activeTweets = new ArrayList<>();
+		for (Tweet t : tweets) {
+			if (!t.isDeleted())
+				activeTweets.add(t);
+		}
+		
+		return activeTweets;
+	}
+	
 	public TweetResponseDto getTweet(int id) {
 		if (!tweetRepository.existsById((long) id) || tweetRepository.findById((long) id).get().isDeleted()) {
 			throw new NotFoundException("Tweet not found");
 		}
-		return tweetMapper.entityToDto(tweetRepository.getById((long) id));
+		return tweetMapper.entityToDto(tweetRepository.findById((long) id).get());
 	}
 
 	public TweetResponseDto deleteTweet(Long id, CredentialsRequestDto credentialsRequestDto) {
