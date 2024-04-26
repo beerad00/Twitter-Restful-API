@@ -139,6 +139,9 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	public ContextDto getTweetContext(int id) {
+		if (tweetRepository.findById((long)id).get().isDeleted()
+		)
+			throw new NotFoundException("Tweet doesn't exist");
 		List<Tweet> alltweets = tweetRepository.findAll();
 		Tweet contexttweet = tweetRepository.findById((long) id).get();
 		Comparator<Tweet> tweetComparator = new Comparator<Tweet>() {
@@ -148,9 +151,10 @@ public class TweetServiceImpl implements TweetService {
 
 			}
 		};
+		alltweets = alltweets.stream().filter(tweet -> {return !tweet.isDeleted();}).collect(Collectors.toList());
 		Collections.sort(alltweets, tweetComparator);
 		int contextindex = alltweets.indexOf(contexttweet);
-		List<Tweet> before = alltweets.subList(0, contextindex);
+		List<Tweet> before = alltweets.subList(0, contextindex-1);
 		List<Tweet> after = alltweets.subList(contextindex + 1, alltweets.size() - 1);
 		ContextDto contextDto = new ContextDto();
 		contextDto.setBefore(tweetMapper.entitestoDtos(before));
