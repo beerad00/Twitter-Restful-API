@@ -13,7 +13,7 @@ public interface TweetService {
     
     void postTweetLike(int id, CredentialsRequestDto credentialsRequestDto);
     
-    ContextDto getTweetContext(int id);
+    ContextDto getTweetContext(Long id);
     
 	List<TweetResponseDto> getTweetReplies(Long id);
 

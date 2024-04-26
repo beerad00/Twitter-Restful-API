@@ -51,7 +51,7 @@ public class TweetController {
         tweetService.postTweetLike(id, credentialsRequestDto);
     }
     @GetMapping("/{id}/context")
-    ContextDto getTweetContext(@PathVariable("id") int id)
+    ContextDto getTweetContext(@PathVariable("id") Long id)
     {
         return tweetService.getTweetContext(id);
     }
