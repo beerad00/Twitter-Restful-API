@@ -75,12 +75,10 @@ public class Seeder implements CommandLineRunner {
 		user2.setFollowing(Arrays.asList(new User[] { user1 }));
 		user2.setFollowers(Arrays.asList(new User[] { user1 }));
 		
-<<<<<<< HEAD
 		userRepository.saveAll(Arrays.asList(new User[] { user1, user2 }));
-=======
+
 		userRepository.saveAllAndFlush(Arrays.asList(new User[] { user1, user2, user3 }));
 
->>>>>>> 321a9d9bea67a4d7217fac08af9fd4104f5805fc
 		// User 1 Tweets
 		Tweet tweet1 = new Tweet();
 		tweet1.setAuthor(user1);
