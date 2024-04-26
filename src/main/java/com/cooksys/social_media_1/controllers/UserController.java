@@ -28,28 +28,28 @@ public class UserController {
 
 	private final UserService userService;
 	
-	@GetMapping("/{username}/feed")
+	@GetMapping("/@{username}/feed")
 	public List<TweetResponseDto> getUserFeed(@PathVariable String username) {
 		return userService.getUserFeed(username);
 	}
 	
-	@GetMapping("/{username}/followers")
+	@GetMapping("/@{username}/followers")
 	public List<UserResponseDto> getUserFollowers(@PathVariable String username) {
 		return userService.getUserFollowers(username);
 	}
 	
-	@GetMapping("/{username}/following")
+	@GetMapping("/@{username}/following")
 	public List<UserResponseDto> getFollowedUsers(@PathVariable String username) {
 		return userService.getFollowedUsers(username);
 	}
 	
-	@PostMapping("/{username}/follow")
+	@PostMapping("/@{username}/follow")
 	public void followUser(@RequestBody CredentialsRequestDto credentialsRequestDto, @PathVariable String username) {
 		userService.followUser(username, credentialsRequestDto);
 		return;
 	}
 	
-	@PatchMapping("/{username}")
+	@PatchMapping("/@{username}")
 	public UserResponseDto updateUsername(@RequestBody UserRequestDto userRequestDto, @PathVariable String username) {
 		return userService.updateUsername(username, userRequestDto);
 	}
