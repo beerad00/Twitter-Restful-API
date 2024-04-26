@@ -209,10 +209,8 @@ public class TweetServiceImpl implements TweetService {
 
 		// Check for null content
 		if (newTweet.getContent() == null) {
-			throw new BadRequestException(
-					"The Tweet content is required to create a new Tweet. Please provide the Tweet content.");
+			throw new BadRequestException("The Tweet content is required to create a new Tweet. Please provide the Tweet content.");
 		}
-
 		// Check Content for @ Mentions and update to newTweet
 		processTweetForMentions(tweetRepository.saveAndFlush(newTweet));
 
@@ -236,8 +234,7 @@ public class TweetServiceImpl implements TweetService {
 
 		// Check for null content
 		if (newTweet.getContent() == null) {
-			throw new BadRequestException(
-					"The Tweet content is required to create a new Tweet. Please provide the Tweet content.");
+			throw new BadRequestException("The Tweet content is required to create a new Tweet. Please provide the Tweet content.");
 		}
 
 		// Set inReplyTo to the original Tweet
