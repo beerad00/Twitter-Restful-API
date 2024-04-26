@@ -148,28 +148,29 @@ public class TweetServiceImpl implements TweetService {
 
 	}
 
-	public ContextDto getTweetContext(int id) {
-		if (tweetRepository.findById((long)id).get().isDeleted()
-		)
-			throw new NotFoundException("Tweet doesn't exist");
-		List<Tweet> alltweets = tweetRepository.findAll();
-		Tweet contexttweet = tweetRepository.findById((long) id).get();
-		Comparator<Tweet> tweetComparator = new Comparator<Tweet>() {
-			@Override
-			public int compare(Tweet o1, Tweet o2) {
-				return o1.getPosted().compareTo(o2.getPosted());
-
-			}
-		};
-		alltweets = alltweets.stream().filter(tweet -> {return !tweet.isDeleted();}).collect(Collectors.toList());
-		Collections.sort(alltweets, tweetComparator);
-		int contextindex = alltweets.indexOf(contexttweet);
-		List<Tweet> before = alltweets.subList(0, contextindex-1);
-		List<Tweet> after = alltweets.subList(contextindex + 1, alltweets.size() - 1);
+	public ContextDto getTweetContext(Long id) {
+		Tweet context = validateTweetId(id).get();
+		List<Tweet> before = new ArrayList<>();
+		List<Tweet> after = new ArrayList<>(context.getReplies());
+		
+		Tweet currentTweet = context;
+		while (currentTweet.getInReplyTo() != null) {
+			before.add(currentTweet.getInReplyTo());
+			currentTweet = currentTweet.getInReplyTo();
+		}
+		
+		for (Tweet t : after) {
+		    if (t.getReplies() != null) {
+		        after.addAll(t.getReplies());
+		    }
+		}
+		
+		Collections.sort(before, Comparator.comparing(Tweet::getPosted).reversed());
+		Collections.sort(after, Comparator.comparing(Tweet::getPosted).reversed());
 		ContextDto contextDto = new ContextDto();
-		contextDto.setBefore(tweetMapper.entitestoDtos(before));
-		contextDto.setAfter(tweetMapper.entitestoDtos(after));
-		contextDto.setTarget(tweetMapper.entityToDto(contexttweet));
+		contextDto.setBefore(tweetMapper.entitestoDtos(checkForActiveTweets(before)));
+		contextDto.setAfter(tweetMapper.entitestoDtos(checkForActiveTweets(after)));
+		contextDto.setTarget(tweetMapper.entityToDto(context));
 		return contextDto;
 	}
 
