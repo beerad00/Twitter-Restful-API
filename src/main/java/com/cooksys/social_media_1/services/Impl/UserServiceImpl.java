@@ -168,9 +168,16 @@ public class UserServiceImpl implements UserService {
 
 	public UserResponseDto postUser(UserRequestDto userRequestDto)
 	{
+		if(userRequestDto.getCredentials()==null||userRequestDto.getProfile()==null||userRequestDto.getCredentials().getUsername()==null||userRequestDto.getCredentials().getUsername().isEmpty()||userRequestDto.getCredentials().getPassword()==null||userRequestDto.getCredentials().getPassword().isEmpty()||userRequestDto.getProfile().getEmail()==null||userRequestDto.getProfile().getEmail().isEmpty())
+		{
+			throw new NotFoundException("Required field are not provided");
+		}
+
 		if(userRepository.findAll().stream().anyMatch(user->{return user.getCredentials().getUsername().equals(userRequestDto.getCredentials().getUsername());}) && userRepository.findAll().stream().anyMatch(user->{return user.getCredentials().getPassword().equals(userRequestDto.getCredentials().getPassword());}))
 		{
 			User olduser = userRepository.findAll().stream().filter(user->{return user.getCredentials().getUsername().equals(userRequestDto.getCredentials().getUsername());}).collect(Collectors.toList()).get(0);
+			if(!olduser.isDeleted())
+				throw new NotFoundException("User already exist");
 			olduser.setDeleted(false);
 			userRepository.save(olduser);
 			return userMapper.entityToDto(olduser);
@@ -181,10 +188,10 @@ public class UserServiceImpl implements UserService {
 			throw new NotFoundException("User already exist");
 		}
 
-		if(userRequestDto.getCredentials()==null||userRequestDto.getProfile()==null||userRequestDto.getCredentials().getUsername()==null||userRequestDto.getCredentials().getUsername().isEmpty()||userRequestDto.getCredentials().getPassword()==null||userRequestDto.getCredentials().getPassword().isEmpty()||userRequestDto.getProfile().getEmail()==null||userRequestDto.getProfile().getEmail().isEmpty())
-		{
-			throw new NotFoundException("Required field are not provided");
-		}
+//		if(userRequestDto.getCredentials()==null||userRequestDto.getProfile()==null||userRequestDto.getCredentials().getUsername()==null||userRequestDto.getCredentials().getUsername().isEmpty()||userRequestDto.getCredentials().getPassword()==null||userRequestDto.getCredentials().getPassword().isEmpty()||userRequestDto.getProfile().getEmail()==null||userRequestDto.getProfile().getEmail().isEmpty())
+//		{
+//			throw new NotFoundException("Required field are not provided");
+//		}
 
 
 		User newuser = userMapper.dtoToEntity(userRequestDto);

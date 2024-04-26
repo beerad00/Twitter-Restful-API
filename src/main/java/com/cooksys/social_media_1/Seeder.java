@@ -32,7 +32,7 @@ public class Seeder implements CommandLineRunner {
 	 */
 	@Override
 	public void run(String... args) throws Exception {
-		
+
 		User user1 = new User();
 		Credentials user1Creds = new Credentials();
 		user1Creds.setUsername("user1");
@@ -56,7 +56,7 @@ public class Seeder implements CommandLineRunner {
 		user2Profile.setLastName("Smith");
 		user2Profile.setPhone("1111111111");
 		user2.setProfile(user2Profile);
-		
+
 		User user3 = new User();
 		Credentials user3Creds = new Credentials();
 		user3Creds.setUsername("user3");
@@ -74,7 +74,7 @@ public class Seeder implements CommandLineRunner {
 		user1.setFollowers(Arrays.asList(new User[] { user2 }));
 		user2.setFollowing(Arrays.asList(new User[] { user1 }));
 		user2.setFollowers(Arrays.asList(new User[] { user1 }));
-		
+
 		userRepository.saveAll(Arrays.asList(new User[] { user1, user2 }));
 
 		userRepository.saveAllAndFlush(Arrays.asList(new User[] { user1, user2, user3 }));
@@ -91,7 +91,7 @@ public class Seeder implements CommandLineRunner {
 		Tweet tweet3 = new Tweet();
 		tweet3.setAuthor(user1);
 		tweet3.setContent("User 1 third tweet!");
-		
+
 		Tweet tweet4 = new Tweet();
 		tweet4.setAuthor(user1);
 		tweet4.setContent("User 1 fourth tweet!");
@@ -108,7 +108,7 @@ public class Seeder implements CommandLineRunner {
 		Tweet tweet7 = new Tweet();
 		tweet7.setAuthor(user2);
 		tweet7.setContent("User 2 third tweet!");
-		
+
 		Tweet tweet8 = new Tweet();
 		tweet8.setAuthor(user2);
 		tweet8.setContent("User 2 fourth tweet!");
@@ -118,7 +118,7 @@ public class Seeder implements CommandLineRunner {
 		response1.setAuthor(user1);
 		response1.setInReplyTo(tweet5);
 		response1.setContent("I agree! Nice first tweet!");
-		
+
 		// User 2 Response
 		Tweet response2 = new Tweet();
 		response2.setAuthor(user2);
@@ -127,14 +127,14 @@ public class Seeder implements CommandLineRunner {
 
 		tweetRepository.saveAllAndFlush(Arrays.asList(new Tweet[] { tweet1, tweet2, tweet3, tweet4, tweet5,
 				tweet6, tweet7, tweet8, response1, response2 }));
-		
+
 		//Hashtags
 		Hashtag hashtag1 = new Hashtag();
 		hashtag1.setLabel("first");
 		hashtag1.setTweets(Arrays.asList(new Tweet[] { tweet1, tweet5 }));
 		hashtag1.setFirstUsed(tweet1.getPosted());
 		hashtag1.setLastUsed(tweet5.getPosted());
-		
+
 		Hashtag hashtag2 = new Hashtag();
 		hashtag2.setLabel("second");
 		hashtag2.setTweets(Arrays.asList(new Tweet[] { tweet2, tweet6 }));
@@ -153,16 +153,16 @@ public class Seeder implements CommandLineRunner {
 
 
 
-		
+
 		hashtagRepository.saveAllAndFlush(Arrays.asList(new Hashtag[] { hashtag1, hashtag2 }));
-		
+
 		tweet1.setHashtags(Arrays.asList(new Hashtag[] { hashtag1 }));
 		tweet5.setHashtags(Arrays.asList(new Hashtag[] { hashtag1 }));
 		tweet2.setHashtags(Arrays.asList(new Hashtag[] { hashtag2 }));
 		tweet6.setHashtags(Arrays.asList(new Hashtag[] { hashtag2 }));
-		
+
 		tweetRepository.saveAllAndFlush(Arrays.asList(new Tweet[] { tweet1, tweet2, tweet5, tweet6 }));
-		
+
 		//Tweet likes
 		user1.setLikedTweets(Arrays.asList(new Tweet[] { tweet1, tweet3, tweet6, tweet8, response1 }));
 		user2.setLikedTweets(Arrays.asList(new Tweet[] { tweet1, tweet3, tweet5, tweet6 }));
@@ -176,12 +176,12 @@ public class Seeder implements CommandLineRunner {
 		tweet8.setLikedByUsers(Arrays.asList(new User[] { user1, user3 }));
 		response1.setLikedByUsers(Arrays.asList(new User[] { user1 }));
 		response2.setLikedByUsers(Arrays.asList(new User[] { user3 }));
-		
+
 		userRepository.saveAllAndFlush(Arrays.asList(new User[] { user1, user2, user3 }));
 		tweetRepository.saveAllAndFlush(Arrays.asList(new Tweet[] { tweet1, tweet2, tweet3, tweet4, tweet5,
 				tweet6, tweet7, tweet8, response1, response2 }));
-		
-		
+
+
 		//Tweet mentions
 		user1.setTweetsMentionedIn(Arrays.asList(new Tweet[] { tweet1, tweet3, tweet6, tweet8, response1 }));
 		user2.setTweetsMentionedIn(Arrays.asList(new Tweet[] { tweet1, tweet3, tweet5, tweet6 }));
@@ -195,7 +195,7 @@ public class Seeder implements CommandLineRunner {
 		tweet8.setMentionedUsers(Arrays.asList(new User[] { user1, user3 }));
 		response1.setMentionedUsers(Arrays.asList(new User[] { user1 }));
 		response2.setMentionedUsers(Arrays.asList(new User[] { user3 }));
-		
+
 		userRepository.saveAllAndFlush(Arrays.asList(new User[] { user1, user2, user3 }));
 		tweetRepository.saveAllAndFlush(Arrays.asList(new Tweet[] { tweet1, tweet2, tweet3, tweet4, tweet5,
 				tweet6, tweet7, tweet8, response1, response2 }));
