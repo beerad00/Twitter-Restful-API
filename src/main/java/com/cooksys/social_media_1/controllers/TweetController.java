@@ -41,7 +41,7 @@ public class TweetController {
         return tweetService.getTweet(id);
     }
     @DeleteMapping("/{id}")
-    TweetResponseDto deleteTweet(@PathVariable("id") int id, @RequestBody CredentialsRequestDto credentialsRequestDto)
+    TweetResponseDto deleteTweet(@PathVariable("id") Long id, @RequestBody CredentialsRequestDto credentialsRequestDto)
     {
         return tweetService.deleteTweet(id,credentialsRequestDto);
     }

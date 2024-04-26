@@ -9,7 +9,7 @@ public interface TweetService {
 
     TweetResponseDto getTweet(int id);
     
-    TweetResponseDto deleteTweet(int id, CredentialsRequestDto credentialsRequestDto);
+    TweetResponseDto deleteTweet(Long id, CredentialsRequestDto credentialsRequestDto);
     
     void postTweetLike(int id, CredentialsRequestDto credentialsRequestDto);
     

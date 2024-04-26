@@ -111,23 +111,15 @@ public class TweetServiceImpl implements TweetService {
 		return tweetMapper.entityToDto(tweetRepository.getById((long) id));
 	}
 
-	public TweetResponseDto deleteTweet(int id, CredentialsRequestDto credentialsRequestDto) {
+	public TweetResponseDto deleteTweet(Long id, CredentialsRequestDto credentialsRequestDto) {
+		Tweet tweet = validateTweetId(id).get();
+		User user = validateCredentials(credentialsRequestDto).get();
+		if (tweet.getAuthor() != user)
+			throw new NotAuthorizedException("Not authorized to delete this tweet.");
 
-		if (!tweetRepository.existsById((long) id)) {
-			throw new NotFoundException("Tweet not found");
-		}
-
-		if (!((tweetRepository.findById((long) id).get().getAuthor().getCredentials().getUsername())
-				.equals(credentialsRequestDto.getUsername()))
-				|| !((tweetRepository.findById((long) id).get().getAuthor().getCredentials().getPassword())
-						.equals(credentialsRequestDto.getPassword()))) {
-			throw new NotFoundException("Unauthorized credential provided");
-		}
-		Tweet tweet = tweetRepository.findById((long) id).get();
 		tweet.setDeleted(true);
-		tweetRepository.save(tweet);
+		tweetRepository.saveAndFlush(tweet);
 		return tweetMapper.entityToDto(tweet);
-
 	}
 
 	public void postTweetLike(int id, CredentialsRequestDto credentialsRequestDto) {
