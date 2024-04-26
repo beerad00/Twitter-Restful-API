@@ -1,5 +1,8 @@
 package com.cooksys.social_media_1.services.Impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +34,17 @@ public class UserServiceImpl implements UserService {
 	private final TweetMapper tweetMapper;
 	private final UserMapper userMapper;
 	private final CredentialsMapper credentialsMapper;
+	
+	// Helper method to validate the credentials passed in
+	private Optional<User> validateCredentials(CredentialsRequestDto credentialsRequestDto) {
+		Credentials credentials = credentialsMapper.dtoToEntity(credentialsRequestDto);
+		Optional<User> user = userRepository.findByCredentialsUsernameAndCredentialsPasswordAndDeletedFalse(credentials.getUsername(), credentials.getPassword());
+		
+		if(user.isEmpty())
+			throw new NotAuthorizedException("The given credentials are invalid. Please try again.");
+		
+		return user;
+	}
 	
 	// Helper method to validate and return the User for the given username
 	private Optional<User> getUser(String username) {
@@ -121,5 +135,59 @@ public class UserServiceImpl implements UserService {
 		// Update and return username
 		userToUpdate.setProfile(newUserInfo.getProfile());
 		return userMapper.entityToDto(userRepository.saveAndFlush(userToUpdate));
+	}
+	
+	private List<Tweet> checkForActiveTweets(List<Tweet> tweets) {
+		List<Tweet> activeTweets = new ArrayList<>();
+		for (Tweet t : tweets) {
+			if (!t.isDeleted())
+				activeTweets.add(t);
+		}
+		
+		return activeTweets;
+	}
+
+	@Override
+	public List<TweetResponseDto> getMentions(String username) {
+		List<Tweet> mentionedTweets = checkForActiveTweets(getUser(username).get().getTweetsMentionedIn());
+		Collections.sort(mentionedTweets, Comparator.comparing(Tweet::getPosted).reversed());
+		return tweetMapper.entitiesToDTOs(mentionedTweets);    
+	}
+
+	@Override
+	public UserResponseDto getOneUser(String username) {
+		return userMapper.entityToDto(getUser(username).get());
+	}
+
+	@Override
+	public List<UserResponseDto> getUsers() {
+		return userMapper.entitiesToDtos(userRepository.findByDeletedFalse());
+	}
+
+	@Override
+	public UserResponseDto deleteUser(String username, CredentialsRequestDto credentialsRequestDto) {
+		User user = validateCredentials(credentialsRequestDto).get();
+		User userToDelete = getUser(username).get();
+		
+		if (user.getId() != userToDelete.getId())
+			throw new NotAuthorizedException("Not authorized to delete the given user.");
+		
+		user.setDeleted(true);
+		userRepository.saveAndFlush(user);
+		return userMapper.entityToDto(user);
+	}
+
+	@Override
+	public void unfollow(String username, CredentialsRequestDto credentialsRequestDto) {
+		User unfollowingUser = validateCredentials(credentialsRequestDto).get();
+		User userToUnfollow = getUser(username).get();
+		
+		if (!unfollowingUser.getFollowing().contains(userToUnfollow))
+			throw new NotFoundException("This following relationship does not exist.");
+		
+		unfollowingUser.getFollowing().remove(userToUnfollow);
+		userToUnfollow.getFollowers().remove(unfollowingUser);
+		userRepository.saveAndFlush(unfollowingUser);
+		userRepository.saveAndFlush(userToUnfollow);
 	}
 }
