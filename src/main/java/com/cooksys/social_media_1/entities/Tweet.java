@@ -43,12 +43,12 @@ public class Tweet {
 	
 	@ManyToOne
     @JoinColumn(name = "repostOf")
-	private Tweet inRepostOf;
+	private Tweet repostOf;
 	
 	@OneToMany(mappedBy = "inReplyTo")
     private List<Tweet> replies;
 	
-	@OneToMany(mappedBy = "inRepostOf")
+	@OneToMany(mappedBy = "repostOf")
     private List<Tweet> reposts;
 	
     @ManyToMany(mappedBy = "likedTweets")
