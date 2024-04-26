@@ -60,8 +60,6 @@ public class UserServiceImpl implements UserService {
 	private Optional<User> getUser(String username) {
 		Optional<User> user = userRepository.findByCredentialsUsernameAndDeletedFalse(username);
 		
-		System.out.println(username);
-		
 		if(user.isEmpty()) {
 			throw new NotFoundException("The given username was not found. Please try again.");
 		}

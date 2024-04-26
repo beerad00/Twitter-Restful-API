@@ -34,8 +34,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/tweets")
 public class TweetController {
 
-
-
     private final TweetService tweetService;
     @GetMapping("/{id}")
    TweetResponseDto getTweet(@PathVariable("id") int id)

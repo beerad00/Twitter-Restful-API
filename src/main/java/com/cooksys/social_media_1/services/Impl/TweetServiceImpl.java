@@ -134,19 +134,15 @@ public class TweetServiceImpl implements TweetService {
 		if (!tweetRepository.existsById((long) id) || tweetRepository.findById((long) id).get().isDeleted()) {
 			throw new NotFoundException("Tweet not found");
 		}
-
-		if (!((tweetRepository.findById((long) id).get().getAuthor().getCredentials().getUsername())
-				.equals(credentialsRequestDto.getUsername()))
-				|| !((tweetRepository.findById((long) id).get().getAuthor().getCredentials().getPassword())
-						.equals(credentialsRequestDto.getPassword()))) {
-			throw new NotFoundException("Unauthorized credential provided");
+		
+		User newUser = validateCredentials(credentialsRequestDto).get();
+		Tweet likedTweet = tweetRepository.findById((long)id).get();
+		
+		if (!newUser.getLikedTweets().contains(likedTweet)) {
+			newUser.getLikedTweets().add(tweetRepository.findById((long)id).get());
 		}
-
-		User user = userRepository.findAll().stream().filter(users -> {
-			return users.getCredentials().getUsername().equals(credentialsRequestDto.getUsername());
-		}).collect(Collectors.toList()).get(0);
-		user.getLikedTweets().add(tweetRepository.findById((long) id).get());
-		userRepository.save(user);
+		
+		userRepository.saveAndFlush(newUser);
 
 	}
 
@@ -218,8 +214,6 @@ public class TweetServiceImpl implements TweetService {
 
 		// Check Content for # Hashtags and update to newTweet
 		processTweetForHashtags(tweetRepository.saveAndFlush(newTweet));
-
-		// System.out.println(newTweet.toString());
 
 		return tweetMapper.entityToDto(newTweet);
 	}
