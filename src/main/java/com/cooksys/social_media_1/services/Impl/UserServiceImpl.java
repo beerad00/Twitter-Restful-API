@@ -108,18 +108,7 @@ public class UserServiceImpl implements UserService {
 	public void followUser(String username, CredentialsRequestDto credentialsRequestDto) {
 		// Validate and get user to follow
 		User userToFollow = getUser(username).get();
-		
-		// Get User by provided Credentials username. There will only be 1
-		Credentials providedCredentials =  credentialsMapper.dtoToEntity(credentialsRequestDto);
-		if (providedCredentials.getUsername() == null || providedCredentials.getPassword() == null) {
-			throw new NotAuthorizedException("Please provide both a Username and a Password within the body of the request.");
-		}
-		User providedUser = getUser(providedCredentials.getUsername()).get();
-		
-		// Check that user for matching passwords
-		if (!providedUser.getCredentials().getPassword().equals(providedCredentials.getPassword())) {
-			throw new NotAuthorizedException("The provided password does not match our records. Please try again.");
-		}
+		User providedUser = validateCredentials(credentialsRequestDto).get();
 		
 		// Check if confirmed given credentials user already follows "username"
 		if (providedUser.getFollowing().contains(userToFollow)) {
@@ -127,11 +116,10 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		// If all above pass, update following and return void
-		List<User> userList = providedUser.getFollowing();
-		userList.add(userToFollow);
-		providedUser.setFollowing(userList);
+		providedUser.getFollowing().add(userToFollow);
+		userToFollow.getFollowers().add(providedUser);
 		userRepository.saveAndFlush(providedUser);
-		return;
+		userRepository.saveAndFlush(userToFollow);
 	}
 
 	@Override
